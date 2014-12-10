@@ -1,0 +1,36 @@
+---
+- name: install python-pycurl
+  apt: pkg=python-pycurl state=latest
+
+- name: add mariadb gpg key
+  apt_key: keyserver=keyserver.ubuntu.com id={{ mariadb_gpg_key_id }} state=present
+
+- name: add mariadb repository
+  apt_repository: repo='deb http://ftp.yz.yamagata-u.ac.jp/pub/dbms/mariadb/repo/{{ mariadb_version }}/ubuntu trusty main'
+
+- name: install mariadb and python-mysqldb
+  apt: pkg={{ item }} update_cache=yes state=latest
+  with_items:
+    - mariadb-server
+    - python-mysqldb
+
+- name: be sure mariadb is running and enabled
+  service: name=mysql state=started enabled=yes
+
+- name: set root password
+  mysql_user: name=root host={{ item }} password={{ db_root_password }} state=present check_implicit_admin=yes login_user=root login_password={{ db_root_password }}
+  with_items:
+    - localhost
+    - 127.0.0.1
+
+- name: remove anonymous users
+  mysql_user: name="" host={{ item }} state=absent login_user=root login_password={{ db_root_password }}
+  with_items:
+    - localhost
+    - 127.0.0.1
+
+- name: disallow remote root login
+  mysql_user: name=root host={{ hostname }} state=absent login_user=root login_password={{ db_root_password }}
+
+- name: remove test database
+  mysql_db: name=test state=absent login_user=root login_password={{ db_root_password }}

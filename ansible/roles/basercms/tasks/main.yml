@@ -1,0 +1,36 @@
+---
+- name: create database
+  mysql_db: name={{ db_name }} state=present encoding=utf8 login_user=root login_password={{ db_root_password }}
+
+- name: create database user
+  mysql_user: name={{ db_login }} password={{ db_password }} priv={{ db_name }}.*:ALL state=present login_user=root login_password={{ db_root_password }}
+
+- name: clone basercms repository
+  git: repo=https://github.com/baserproject/basercms
+       dest={{ basercms_root }}
+       version={{ basercms_version }}
+
+- name: 
+  file: path={{ basercms_root }} owner={{ user }} group={{ group }} state=directory recurse=yes
+
+- name: change basercms config
+  shell: sed -i "/Configure::write('App\.baseUrl'/s/,.*)/, '')/g" {{ basercms_root }}/app/Config/core.php
+
+- name: install basercms
+  shell: |
+    php ./Console/cake.php bc_manager install \
+    "{{ basercms_site_url }}" \
+    "{{ basercms_db_driver }}" \
+    "{{ basercms_admin_name }}" \
+    "{{ basercms_admin_password }}" \
+    "{{ basercms_admin_email }}" \
+    --host     "{{ db_host }}" \
+    --database "{{ db_name }}" \
+    --login    "{{ db_login }}" \
+    --password "{{ db_password }}" \
+    --prefix   "{{ db_prefix }}" \
+    --port     "{{ db_port }}" \
+    --smarturl "{{ basercms_smart_url }}" \
+    --data     "{{ basercms_data }}" \
+  args:
+    chdir: "{{ basercms_root }}/app"

@@ -1,0 +1,26 @@
+---
+- name: add hhvm gpg key
+  apt_key: url=http://dl.hhvm.com/conf/hhvm.gpg.key state=present
+
+- name: add hhvm ubuntu repository
+  apt_repository: repo="deb http://dl.hhvm.com/ubuntu trusty main" state=present
+
+- name: install hhvm
+  apt: pkg=hhvm update_cache=yes force=yes
+  notify:
+    - install fast-cgi
+
+- name: write config
+  template: src=php.ini.j2 dest=/etc/hhvm/php.ini mode=0644 owner=root group=root
+
+- name: change init script
+  shell: sed -i '/^RUN_AS_USER/s/".*"/"{{ user }}"/g' /etc/init.d/hhvm && sed -i '/^RUN_AS_GROUP/s/".*"/"{{ group }}"/g' /etc/init.d/hhvm
+  notify:
+    - restart hhvm
+
+- name: assure existence and ownership of php session directory
+  file: path={{ item }} state=directory owner={{ user }} group={{ group }} mode=0755
+  with_items:
+    - /var/lib/php5
+    - /var/run/hhvm
+    - /var/log/hhvm

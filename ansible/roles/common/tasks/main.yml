@@ -1,0 +1,26 @@
+- name: update apt cache
+  apt: update_cache=yes cache_valid_time=86400
+
+- name: install essential packages
+  apt: pkg={{ item }} state=present
+  with_items:
+    - unzip
+    - vim
+    - git
+    - ntp
+    - language-pack-ja-base
+    - language-pack-ja
+    - software-properties-common
+
+- name: change timezone
+  copy: src=/usr/share/zoneinfo/Asia/Tokyo dest=/etc/localtime backup=yes
+
+- name: ensure a locale exists
+  locale_gen: name=ja_JP.UTF-8 state=present
+
+- name: update locale
+  shell: update-locale LANG=ja_JP.UTF-8
+
+- name: write ntp config
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf backup=yes
+  notify: restart ntp

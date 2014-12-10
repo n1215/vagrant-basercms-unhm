@@ -1,0 +1,10 @@
+---
+- name: install fast-cgi
+  shell: /usr/share/hhvm/install_fastcgi.sh
+  notify:
+    - restart hhvm
+    - restart nginx
+- name: restart hhvm
+  service: name=hhvm state=restarted
+- name: restart nginx
+  service: name=nginx state=restarted

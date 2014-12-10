@@ -1,0 +1,35 @@
+---
+user: vagrant
+group: vagrant
+
+hostname: localhost.localdomain
+
+# NTP
+ntp_server_hostname: ntp.nict.jp
+
+# Web server
+server_name: 192.168.33.10
+server_documentroot: /var/www/basercms/app/webroot
+
+# HHVM
+php_timezone: "Asia/Tokyo"
+
+# Database
+db_root_password: root
+db_name: basercms
+db_login: basercms
+db_password: basercms
+db_host: localhost
+db_port: 3306
+db_prefix: mysite_
+
+# baserCMS
+basercms_version: dev-3
+basercms_db_driver: mysql
+basercms_admin_name: admin
+basercms_admin_password: basercms
+basercms_admin_email: webmaster@example.com
+basercms_data: nada-icons.default
+basercms_site_url: http://192.168.33.10
+basercms_root: /var/www/basercms
+basercms_smart_url: true

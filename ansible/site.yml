@@ -1,0 +1,12 @@
+---
+- name: Install baserCMS, Nginx, HHVM and MariaDB
+  hosts: basercms-server
+  connection: local
+  remote_user: vagrant
+  sudo: yes
+  roles:
+    - common
+    - nginx
+    - hhvm
+    - mariadb
+    - basercms

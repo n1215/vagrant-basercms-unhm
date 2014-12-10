@@ -1,0 +1,8 @@
+---
+- name: add nginx stable repository and key
+  apt_repository: repo="deb http://nginx.org/packages/ubuntu/ trusty nginx"
+- name: install nginx
+  apt: pkg=nginx force=yes state=present
+- name: configure nginx default site
+  template: src=default.conf.j2 dest=/etc/nginx/conf.d/default.conf backup=yes
+  notify: restart nginx
