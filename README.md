@@ -15,6 +15,7 @@ baserCMSのHHVMによる動作確認のために作ったVagrantのテンプレ�
 ----
 * VirtualBox
 * Vagrant
+
 ※ Ansibleはゲストマシンに押し込んであるので多分Windowsでも動くはず
 
 インストール
@@ -24,7 +25,7 @@ baserCMSのHHVMによる動作確認のために作ったVagrantのテンプレ�
     $ cd vagrant-basercms-unhm
     $ vagrant up
 
-http://192.168.33.10 にアクセス
+http://192.168.33.10 にアクセス  
 ※ スマートURLオン
 
 管理画面
@@ -37,5 +38,5 @@ http://192.168.33.10 にアクセス
 
 注意事項
 --------
-unserialize()関数が上手く動かなかったため、
+unserialize()関数が上手く動かなかったため、 
 /var/www/basercms/app/webroot/theme/nada-icons/Elements/search.phpの一部を削除しています。

@@ -1,0 +1,22 @@
+---
+- name: install basercms
+  shell: |
+    php ./Console/cake.php bc_manager install \
+    "{{ basercms_site_url }}" \
+    "{{ basercms_db_driver }}" \
+    "{{ basercms_admin_name }}" \
+    "{{ basercms_admin_password }}" \
+    "{{ basercms_admin_email }}" \
+    --host     "{{ db_host }}" \
+    --database "{{ db_name }}" \
+    --login    "{{ db_login }}" \
+    --password "{{ db_password }}" \
+    --prefix   "{{ db_prefix }}" \
+    --port     "{{ db_port }}" \
+    --smarturl "{{ basercms_smart_url }}" \
+    --data     "{{ basercms_data }}" \
+  args:
+    chdir: "{{ basercms_root }}/app"
+
+- name: fix template file
+  shell: sed -i "/unserialize/d" "{{ basercms_root }}/app/webroot/theme/{{ basercms_theme }}/Elements/search.php"

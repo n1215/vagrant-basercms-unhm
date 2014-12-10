@@ -32,4 +32,7 @@ basercms_admin_email: webmaster@example.com
 basercms_data: nada-icons.default
 basercms_site_url: http://192.168.33.10
 basercms_root: /var/www/basercms
+#共有フォルダに配置する場合
+#basercms_root: /vagrant/basercms
 basercms_smart_url: true
+basercms_theme: nada-icons

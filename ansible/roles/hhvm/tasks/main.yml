@@ -12,15 +12,19 @@
 
 - name: write config
   template: src=php.ini.j2 dest=/etc/hhvm/php.ini mode=0644 owner=root group=root
+  notify:
+    - restart hhvm
 
 - name: change init script
   shell: sed -i '/^RUN_AS_USER/s/".*"/"{{ user }}"/g' /etc/init.d/hhvm && sed -i '/^RUN_AS_GROUP/s/".*"/"{{ group }}"/g' /etc/init.d/hhvm
   notify:
     - restart hhvm
 
-- name: assure existence and ownership of php session directory
+- name: ensure existence and ownership of directories used by hhvm
   file: path={{ item }} state=directory owner={{ user }} group={{ group }} mode=0755
   with_items:
     - /var/lib/php5
     - /var/run/hhvm
     - /var/log/hhvm
+  notify:
+    - restart hhvm

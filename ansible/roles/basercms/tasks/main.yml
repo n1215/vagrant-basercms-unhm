@@ -1,8 +1,11 @@
 ---
+- name: be sure database is absent
+  mysql_db: name={{ db_name }} state=absent login_user=root login_password={{ db_root_password }}
+
 - name: create database
   mysql_db: name={{ db_name }} state=present encoding=utf8 login_user=root login_password={{ db_root_password }}
 
-- name: create database user
+- name: be sure database user is present
   mysql_user: name={{ db_login }} password={{ db_password }} priv={{ db_name }}.*:ALL state=present login_user=root login_password={{ db_root_password }}
 
 - name: clone basercms repository
@@ -10,27 +13,20 @@
        dest={{ basercms_root }}
        version={{ basercms_version }}
 
-- name: 
+- name: change onwer of documentroot directory
   file: path={{ basercms_root }} owner={{ user }} group={{ group }} state=directory recurse=yes
 
 - name: change basercms config
   shell: sed -i "/Configure::write('App\.baseUrl'/s/,.*)/, '')/g" {{ basercms_root }}/app/Config/core.php
 
-- name: install basercms
-  shell: |
-    php ./Console/cake.php bc_manager install \
-    "{{ basercms_site_url }}" \
-    "{{ basercms_db_driver }}" \
-    "{{ basercms_admin_name }}" \
-    "{{ basercms_admin_password }}" \
-    "{{ basercms_admin_email }}" \
-    --host     "{{ db_host }}" \
-    --database "{{ db_name }}" \
-    --login    "{{ db_login }}" \
-    --password "{{ db_password }}" \
-    --prefix   "{{ db_prefix }}" \
-    --port     "{{ db_port }}" \
-    --smarturl "{{ basercms_smart_url }}" \
-    --data     "{{ basercms_data }}" \
-  args:
-    chdir: "{{ basercms_root }}/app"
+- name: be sure installed configs and admin assets directories are absent
+  file: path="{{ basercms_root }}/{{ item }}" state=absent
+  with_items:
+    - "app/Config/install.php"
+    - "app/Config/database.php"
+    - "app/webroot/img/admin"
+    - "app/webroot/js/admin"
+    - "app/webroot/css/admin"
+
+- include: install.yml
+
